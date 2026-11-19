@@ -1,0 +1,422 @@
+/* Clean Air Companion - Fully Responsive & Modular Styling */
+:root {
+  --primary: #047857;
+  --primary-dark: #064e3b;
+  --primary-light: #ecfdf5;
+  --secondary: #0284c7;
+  --secondary-light: #f0f9ff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --bg-card: #ffffff;
+  --radius: 14px;
+  --sidebar-w: 380px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+/* Senior Citizen Mode Overrides */
+body.senior-mode {
+  font-size: 20px;
+  line-height: 1.6;
+  background-color: #fefefe;
+  color: #0f172a;
+}
+body.senior-mode button,
+body.senior-mode select,
+body.senior-mode input {
+  font-size: 19px;
+  min-height: 52px;
+}
+body.senior-mode h1 { font-size: 32px !important; }
+body.senior-mode h2 { font-size: 26px !important; }
+body.senior-mode h3 { font-size: 22px !important; }
+
+/* Layout Grid: Collapsible Left Column + Main Column */
+.app-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Left Column Sidebar (Minimized by default) */
+.left-sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border-right: 1px solid var(--border);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  transition: transform 0.25s ease, margin-left 0.25s ease;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Minimized by default */
+.left-sidebar.minimized {
+  margin-left: calc(-1 * var(--sidebar-w));
+  transform: translateX(-100%);
+}
+
+.sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f8fafc;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.sidebar-content {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+/* Collapsible Accordion Box in Sidebar */
+.sidebar-module {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebar-module:hover {
+  border-color: #cbd5e1;
+}
+
+.sidebar-module-header {
+  padding: 12px 14px;
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.sidebar-module-header:hover {
+  background-color: #f1f5f9;
+}
+
+.sidebar-module-body {
+  padding: 14px;
+  border-top: 1px solid var(--border);
+  display: none;
+}
+
+.sidebar-module.expanded .sidebar-module-body {
+  display: block;
+}
+
+.sidebar-module.expanded .sidebar-module-header {
+  background-color: #ecfdf5;
+  color: var(--primary-dark);
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+}
+
+.top-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.main-body {
+  padding: 18px 16px 36px 16px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Mobile Off-Canvas Backdrop */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.5);
+  z-index: 95;
+}
+
+@media (max-width: 900px) {
+  .left-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+  }
+  .left-sidebar:not(.minimized) + .sidebar-backdrop {
+    display: block;
+  }
+}
+
+/* UI Cards & Buttons */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+  padding: 20px;
+  margin-bottom: 18px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+  min-height: 40px;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: white;
+}
+.btn-secondary:hover {
+  background-color: #0369a1;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-main);
+}
+.btn-outline:hover {
+  background-color: #f1f5f9;
+}
+
+.btn-icon-only {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 1.5px solid var(--border);
+  background-color: #f8fafc;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-icon-only:hover {
+  background-color: #e2e8f0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* CPCB Category Badges */
+.badge-good { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.badge-satisfactory { background: #ecfccb; color: #4d7c0f; border: 1px solid #d9f99d; }
+.badge-moderate { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+.badge-poor { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+.badge-very-poor { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+.badge-severe { background: #fce7f3; color: #831843; border: 1px solid #fbcfe8; }
+
+/* Hero Grid: Today's Air Quality (Left) + Monthly Trend Graph (Right) */
+.hero-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 992px) {
+  .hero-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.trend-bar-rect {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  cursor: pointer;
+}
+.trend-bar-rect:hover {
+  opacity: 0.85;
+}
+
+/* Fluid Responsive Grid Utilities */
+.grid-fluid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.grid-fluid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+/* 12-Hour Smog Outlook Responsive Non-Scrollable Grid */
+.forecast-grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+@media (max-width: 992px) {
+  .forecast-grid-12 {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+  }
+}
+
+@media (max-width: 580px) {
+  .forecast-grid-12 {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+}
+
+.forecast-item {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 4px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+}
+
+/* Expandable Main Action Card */
+.expandable-action-card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: #ffffff;
+}
+
+.expandable-action-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.expandable-action-body {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  background: #f8fafc;
+  display: none;
+}
+
+.expandable-action-card.open .expandable-action-body {
+  display: block;
+}
+
+/* Pulsing mic */
+@keyframes pulseMic {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+.pulse-mic {
+  animation: pulseMic 1.5s infinite ease-in-out;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 16px;
+  max-width: 540px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+  padding: 22px;
+}

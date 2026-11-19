@@ -1,0 +1,16 @@
+{
+  "name": "Clean Air Companion",
+  "short_name": "CleanAir",
+  "description": "AI Daily Action Assistant for Healthier Families & Cleaner Communities",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#047857",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23047857'/><path d='M30 45 C40 35, 60 35, 70 45 M25 55 C40 45, 60 45, 75 55 M35 65 C45 55, 55 55, 65 65' stroke='white' stroke-width='6' stroke-linecap='round' fill='none'/></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
