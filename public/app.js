@@ -570,57 +570,55 @@
   // --- Top Navbar (Icons Only for Language, Senior Mode, Profile; City on Right Corner) ---
   function renderTopNavbar(t) {
     return `
-      <nav class="top-navbar">
+      <nav class="top-navbar" role="navigation" aria-label="Main Navigation">
         
         <!-- Left: Sidebar Toggle Button + Logo -->
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <button id="btn-toggle-left-menu" class="btn btn-outline" style="padding: 6px 12px; min-height: 38px; font-weight: 700;" title="Toggle Left Modules Menu">
+        <div class="nav-brand-section">
+          <button id="btn-toggle-left-menu" class="nav-menu-btn" title="Toggle Modules & Tools Menu" aria-label="Toggle Modules Menu">
             <span>☰</span>
-            <span style="font-size: 13px;">${t.menuTitle}</span>
+            <span class="nav-menu-text">${t.menuTitle}</span>
           </button>
 
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 22px;">🍃</span>
-            <span style="font-weight: 800; font-size: 17px; color: var(--primary-dark); white-space: nowrap;">
-              ${t.appName}
-            </span>
-          </div>
+          <a href="#" class="nav-logo" title="${t.appName}" onclick="event.preventDefault();">
+            <span class="nav-logo-icon">🍃</span>
+            <span class="nav-logo-text">${t.appName}</span>
+          </a>
         </div>
 
         <!-- Right Side: Language (Icon Only), Senior Mode (Icon Only), Profile (Icon Only), City Dropdown -->
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;">
+        <div class="nav-actions-section">
           
-          <!-- Language Selector (Icon Only) -->
-          <div style="position: relative; display: inline-flex; align-items: center;">
-            <select id="language-selector" title="Language / भाषा / மொழி" style="cursor: pointer; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); background: #ffffff; font-weight: 700; font-size: 14px; min-height: 38px;">
+          <div class="nav-tools-group">
+            <!-- Language Selector (Icon Only) -->
+            <select id="language-selector" class="nav-lang-select" title="Language / भाषा / மொழி" aria-label="Language selector">
               <option value="en" ${state.language === 'en' ? 'selected' : ''}>🌐 EN</option>
               <option value="hi" ${state.language === 'hi' ? 'selected' : ''}>🌐 HI (हिंदी)</option>
               <option value="ta" ${state.language === 'ta' ? 'selected' : ''}>🌐 TA (தமிழ்)</option>
             </select>
+
+            <!-- Senior Mode (Icon Only) -->
+            <button id="btn-toggle-senior" class="btn-icon-nav" title="${t.seniorMode} (सरल मोड)" aria-label="${t.seniorMode}">
+              👓
+            </button>
+
+            <!-- Household Profile (Icon Only) -->
+            <button id="btn-open-profile" class="btn-icon-nav" title="${t.profileBtn}" aria-label="${t.profileBtn}">
+              👤
+              ${Object.keys(state.profile).length > 0 ? `<span class="profile-active-dot"></span>` : ''}
+            </button>
           </div>
 
-          <!-- Senior Mode (Icon Only) -->
-          <button id="btn-toggle-senior" class="btn-icon-only" title="${t.seniorMode} (सरल मोड)" aria-label="${t.seniorMode}">
-            👓
-          </button>
-
-          <!-- Household Profile (Icon Only) -->
-          <button id="btn-open-profile" class="btn-icon-only" title="${t.profileBtn}" aria-label="${t.profileBtn}" style="position: relative;">
-            👤
-            ${Object.keys(state.profile).length > 0 ? `<span style="position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; border-radius: 50%; background-color: var(--primary);"></span>` : ''}
-          </button>
-
           <!-- City Selector in Top Right Corner -->
-          <div style="display: inline-flex; align-items: center; gap: 4px; background: #f1f5f9; padding: 2px 8px; border-radius: 8px; border: 1px solid var(--border);">
-            <span style="color: var(--primary); font-size: 14px;">📍</span>
-            <select id="city-selector" style="background: transparent; border: none; font-weight: 700; color: #1e293b; cursor: pointer; outline: none; padding: 6px 2px; font-size: 13px; max-width: 170px;">
+          <div class="nav-city-box">
+            <span class="city-pin-icon" aria-hidden="true">📍</span>
+            <select id="city-selector" class="nav-city-select" title="${t.locationLabel}" aria-label="${t.locationLabel}">
               ${state.citiesList.map(c => `
                 <option value="${c.id}" ${state.selectedCity === c.id ? 'selected' : ''}>
                   ${c.name}
                 </option>
               `).join('')}
             </select>
-            <button id="btn-detect-gps" class="btn btn-outline" style="padding: 2px 6px; min-height: 28px; border: none; background: #e2e8f0; border-radius: 6px;" title="${t.detectLocation}">
+            <button id="btn-detect-gps" class="btn-gps-nav" title="${t.detectLocation}" aria-label="${t.detectLocation}">
               🧭
             </button>
           </div>
@@ -806,7 +804,7 @@
           </div>
 
           <!-- Weather factors -->
-          <div style="background: #f8fafc; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border); display: flex; gap: 14px; align-items: center;">
+          <div class="hero-weather-strip">
             <div style="text-align: center;">
               <div style="color: #64748b; font-size: 11px;">🌡 ${t.temp}</div>
               <span style="font-size: 15px; font-weight: 700; color: #1e293b;">${weather.temperature || 22}°C</span>
@@ -1300,13 +1298,41 @@
     }
 
     return `
-      <div style="max-width: 780px; margin: 0 auto; padding: 20px 16px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-          <button id="btn-exit-senior" class="btn btn-outline" style="font-size: 16px; padding: 10px 18px; min-height: 48px; font-weight: 800;">
+      <!-- Senior Mode Sticky Top Navbar -->
+      <nav class="top-navbar senior-top-bar" role="navigation" aria-label="Senior Citizen Navigation">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <button id="btn-exit-senior" class="btn btn-primary" style="font-size: 15px; padding: 6px 14px; min-height: 42px; font-weight: 800;">
             ← ${t.exitSeniorMode}
           </button>
-          <span style="font-size: 16px; font-weight: 700; color: #047857;">👓 ${t.seniorMode}</span>
+          <div class="nav-logo" style="font-size: 17px;">
+            <span class="nav-logo-icon">🍃</span>
+            <span class="nav-logo-text">${t.appName}</span>
+          </div>
         </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <!-- Language Selector in Senior Mode -->
+          <select id="senior-language-selector" class="nav-lang-select" style="min-height: 42px; font-size: 14px; font-weight: 800; padding: 0 10px;" title="Language / भाषा">
+            <option value="en" ${state.language === 'en' ? 'selected' : ''}>🌐 EN</option>
+            <option value="hi" ${state.language === 'hi' ? 'selected' : ''}>🌐 HI (हिंदी)</option>
+            <option value="ta" ${state.language === 'ta' ? 'selected' : ''}>🌐 TA (தமிழ்)</option>
+          </select>
+
+          <!-- City Selector in Senior Mode -->
+          <div class="nav-city-box" style="min-height: 42px; padding: 0 8px;">
+            <span class="city-pin-icon" style="font-size: 15px;">📍</span>
+            <select id="senior-city-selector" class="nav-city-select" style="font-size: 14px; max-width: 170px;" title="Select City">
+              ${state.citiesList.map(c => `
+                <option value="${c.id}" ${state.selectedCity === c.id ? 'selected' : ''}>
+                  ${c.name}
+                </option>
+              `).join('')}
+            </select>
+          </div>
+        </div>
+      </nav>
+
+      <div style="max-width: 780px; margin: 0 auto; padding: 16px 14px 40px 14px;">
 
         <div style="background-color: ${aqi > 200 ? '#fef2f2' : aqi > 100 ? '#fefce8' : '#f0fdf4'}; border: 3px solid ${aqi > 200 ? '#dc2626' : aqi > 100 ? '#ca8a04' : '#16a34a'}; border-radius: 20px; padding: 24px; margin-bottom: 20px; text-align: center;">
           <span style="font-size: 16px; font-weight: 700; color: #475569; text-transform: uppercase;">${city} • AQI</span>
@@ -1681,6 +1707,24 @@
         state.isSeniorMode = false;
         localStorage.setItem('cleanair_senior_mode', 'false');
         renderApp();
+      };
+    }
+
+    const langSel = document.getElementById('senior-language-selector');
+    if (langSel) {
+      langSel.onchange = (e) => {
+        state.language = e.target.value;
+        localStorage.setItem('cleanair_lang', state.language);
+        fetchAirAndAdvisorData(state.selectedCity, state.activeScenario);
+      };
+    }
+
+    const citySel = document.getElementById('senior-city-selector');
+    if (citySel) {
+      citySel.onchange = (e) => {
+        state.selectedCity = e.target.value;
+        state.activeScenario = null;
+        fetchAirAndAdvisorData(state.selectedCity, null);
       };
     }
 
