@@ -1,9 +1,10 @@
-const CACHE_NAME = 'clean-air-companion-v2';
+const CACHE_NAME = 'clean-air-companion-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/style.css',
   '/app.js',
+  '/favicon.svg',
   '/manifest.json'
 ];
 
