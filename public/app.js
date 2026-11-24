@@ -280,13 +280,19 @@
       avoidToday: false
     },
 
-    // Guided daily steps (reset every day)
+    // Guided daily steps (reset every day) — all options minimized by default
     guideDone: (() => {
       try {
         const g = JSON.parse(localStorage.getItem('cleanair_guide') || 'null');
         return g && g.date === new Date().toDateString() ? g.done : {};
       } catch (e) { return {}; }
     })(),
+    guideOptionsOpen: {
+      mask: false,
+      windows: false,
+      activity: false,
+      family: false
+    },
     showWelcome: localStorage.getItem('cleanair_welcome_dismissed') !== 'true',
 
     isProfileModalOpen: false,
@@ -549,18 +555,19 @@
           <!-- Top Sticky Navbar (City in Right Corner, Language & Senior Mode Icons Only) -->
           ${renderTopNavbar(t)}
 
-          <!-- Main Body (Realigned by Priority) -->
+          <!-- Main Body (Realigned by Priority: 1. Understand -> 2. Recommended Plan -> 3. Full Plan -> 4. 12-Hour Outlook) -->
           <main class="main-body">
             ${renderWelcomeGuide(t)}
-            ${renderGuidedPlan(t)}
-            <div class="section-label"><span class="step-num">2</span> ${L('Understand today\'s air', 'आज की हवा को समझें', 'இன்றைய காற்றைப் புரிந்துகொள்ளுங்கள்')}</div>
+            <div class="section-label"><span class="step-num">1</span> ${L('Understand Today\'s Air', 'आज की हवा को समझें', 'இன்றைய காற்றைப் புரிந்துகொள்ளுங்கள்')}</div>
             <div class="hero-grid-2">
               ${renderAqiHero(t)}
               ${renderMonthlyAqiTrend(t)}
             </div>
-            <div class="section-label"><span class="step-num">3</span> ${L('Act with your full plan', 'पूरी योजना के साथ कदम उठाएं', 'முழு திட்டத்துடன் செயல்படுங்கள்')}</div>
+            <div class="section-label"><span class="step-num">2</span> ${L('Recommended Plan Right Now', 'अभी की अनुशंसित योजना', 'இப்போது பரிந்துரைக்கப்படும் திட்டம்')}</div>
+            ${renderGuidedPlan(t)}
+            <div class="section-label"><span class="step-num">3</span> ${L('Act With Your Full Plan', 'पूरी योजना के साथ कदम उठाएं', 'முழு திட்டத்துடன் செயல்படுங்கள்')}</div>
             ${renderDailyAdvisorMinimized(t)}
-            <div class="section-label"><span class="step-num">4</span> ${L('Plan the next 12 hours', 'अगले 12 घंटे की योजना बनाएं', 'அடுத்த 12 மணிநேரத்தைத் திட்டமிடுங்கள்')}</div>
+            <div class="section-label"><span class="step-num">4</span> ${L('Plan the Next 12 Hours', 'अगले 12 घंटे की योजना बनाएं', 'அடுத்த 12 மணிநேரத்தைத் திட்டமிடுங்கள்')}</div>
             ${render12HourSmogOutlook(t)}
             ${renderQuickSidebarNavPills(t)}
           </main>
@@ -626,8 +633,8 @@
         <div class="welcome-text">
           <strong>${L('Welcome! Here is how to use this app in 3 taps:', 'स्वागत है! 3 आसान कदम:', 'வரவேற்கிறோம்! 3 எளிய படிகள்:')}</strong>
           <ol>
-            <li>${L('Pick your city at the top 📍', 'ऊपर अपना शहर चुनें 📍', 'மேலே உங்கள் நகரத்தைத் தேர்ந்தெடுக்கவும் 📍')}</li>
-            <li>${L('Follow "Your plan right now" and tick each step ✓', '"अभी आपकी योजना" के कदम पूरे करें ✓', '"இப்போது உங்கள் திட்டம்" படிகளை முடிக்கவும் ✓')}</li>
+            <li>${L('Pick your city at the top 📍 to understand today\'s air', 'आज की हवा समझने के लिए ऊपर अपना शहर चुनें 📍', 'இன்றைய காற்றை அறிய மேலே உங்கள் நகரத்தைத் தேர்ந்தெடுக்கவும் 📍')}</li>
+            <li>${L('Expand options in "Recommended Plan Right Now" and tick each step ✓', '"अभी की अनुशंसित योजना" के विकल्प खोलें और कदम पूरे करें ✓', '"இப்போது பரிந்துரைக்கப்படும் திட்டம்" விருப்பங்களைத் திறந்து முடிக்கவும் ✓')}</li>
             <li>${L('Tap 👓 for large text, or 👤 to personalise for your family', 'बड़े अक्षरों के लिए 👓, परिवार के लिए 👤 दबाएं', 'பெரிய எழுத்துக்கு 👓, குடும்பத்துக்கு 👤 தொடவும்')}</li>
           </ol>
         </div>
@@ -636,7 +643,7 @@
     `;
   }
 
-  // --- Guided plan: tells the user exactly what to do next ---
+  // --- Guided plan: tells the user exactly what to do next (All options minimized by default) ---
   function getGuideSteps() {
     const aqi = state.airData ? state.airData.aqi : 150;
     const band = aqiBand(aqi);
@@ -647,7 +654,9 @@
 
     // 1. Mask / going out
     steps.push({
-      key: 'mask', icon: '😷',
+      key: 'mask',
+      icon: '😷',
+      optionTitle: L('Mask & Outdoor Protection', 'मास्क और बाहरी सुरक्षा', 'முகக்கவசம் & வெளிப்புற பாதுகாப்பு'),
       title: {
         good: L('No mask needed today', 'आज मास्क की जरूरत नहीं', 'இன்று முகக்கவசம் தேவையில்லை'),
         moderate: L('Carry a mask for busy roads', 'व्यस्त सड़कों के लिए मास्क साथ रखें', 'நெரிசலான சாலைகளுக்கு முகக்கவசம் எடுத்துச் செல்லுங்கள்'),
@@ -660,7 +669,9 @@
 
     // 2. Windows / ventilation
     steps.push({
-      key: 'windows', icon: '🪟',
+      key: 'windows',
+      icon: '🪟',
+      optionTitle: L('Windows & Home Ventilation', 'खिड़कियां और घर का वेंटिलेशन', 'ஜன்னல்கள் & வீட்டு காற்றோட்டம்'),
       title: band === 'good'
         ? L('Open windows and air out your home', 'खिड़कियां खोलें और घर में हवा आने दें', 'ஜன்னல்களைத் திறந்து காற்றோட்டம் செய்யுங்கள்')
         : L(`Keep windows closed; air out briefly at ${vent.bestHour || '12–3 PM'}`, `खिड़कियां बंद रखें; ${vent.bestHour || '12–3 PM'} पर थोड़ी देर खोलें`, `ஜன்னல்களை மூடுங்கள்; ${vent.bestHour || '12–3 PM'} சிறிது நேரம் திறக்கவும்`),
@@ -670,7 +681,9 @@
 
     // 3. Exercise / activity timing
     steps.push({
-      key: 'activity', icon: band === 'good' ? '🏃' : '🧘',
+      key: 'activity',
+      icon: band === 'good' ? '🏃' : '🧘',
+      optionTitle: L('Exercise & Activity Timing', 'व्यायाम और गतिविधि का समय', 'உடற்பயிற்சி & செயல்பாட்டு நேரம்'),
       title: {
         good: L('Great day for an outdoor walk or exercise', 'बाहर टहलने/व्यायाम के लिए अच्छा दिन', 'நடைப்பயிற்சிக்கு நல்ல நாள்'),
         moderate: L('Exercise outdoors after 12:30 PM, away from traffic', 'दोपहर 12:30 के बाद, ट्रैफिक से दूर व्यायाम करें', 'மதியம் 12:30க்குப் பிறகு, போக்குவரத்திலிருந்து விலகி உடற்பயிற்சி'),
@@ -684,7 +697,9 @@
     // 4. Family / vulnerable members
     const hasVulnerable = p.hasChildren !== false || p.hasSeniors !== false;
     steps.push({
-      key: 'family', icon: '👨‍👩‍👧',
+      key: 'family',
+      icon: '👨‍👩‍👧',
+      optionTitle: L('Family & Vulnerable Members', 'परिवार व संवेदनशील सदस्य', 'குடும்பம் & முதியோர்/குழந்தைகள்'),
       title: hasVulnerable
         ? L('Check today\'s advice for children & seniors', 'बच्चों और बुजुर्गों के लिए आज की सलाह देखें', 'குழந்தைகள் & முதியோருக்கான ஆலோசனை')
         : L('Review your household plan', 'अपनी घरेलू योजना देखें', 'உங்கள் குடும்பத் திட்டத்தைப் பாருங்கள்'),
@@ -706,6 +721,7 @@
     const doneCount = steps.filter(s => state.guideDone[s.key]).length;
     const pct = Math.round((doneCount / steps.length) * 100);
     const nextStep = steps.find(s => !state.guideDone[s.key]);
+    const anyOpen = steps.some(s => state.guideOptionsOpen[s.key]);
 
     const headline = {
       good: L('Air is clean today — enjoy the outdoors.', 'आज हवा साफ है — बाहर का आनंद लें।', 'இன்று காற்று சுத்தமாக உள்ளது — வெளியே மகிழுங்கள்.'),
@@ -715,16 +731,20 @@
     }[band];
 
     return `
-      <div class="section-label"><span class="step-num">1</span> ${L('Your plan right now', 'अभी आपकी योजना', 'இப்போது உங்கள் திட்டம்')}</div>
       <section class="card guide-card band-${band}" aria-labelledby="guide-title">
         <div class="guide-head">
           <div class="guide-head-text">
             <span class="guide-greeting">${greeting()}${city ? ' • ' + city : ''}</span>
             <h2 id="guide-title" class="guide-headline">${headline}</h2>
           </div>
-          <div class="guide-aqi-chip">
-            <span class="chip-label">AQI</span>
-            <span class="chip-value">${aqi}</span>
+          <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+            <button id="btn-toggle-all-guide" class="btn btn-outline btn-sm" type="button" title="${anyOpen ? L('Minimize all options', 'सभी विकल्प संक्षिप्त करें', 'அனைத்தையும் சுருக்குக') : L('Expand all options', 'सभी विकल्प खोलें', 'அனைத்தையும் விரிவாக்குக')}">
+              ${anyOpen ? L('Minimize All ▲', 'सभी संक्षिप्त करें ▲', 'அனைத்தும் சுருக்கு ▲') : L('Expand All ▼', 'सभी खोलें ▼', 'அனைத்தும் விரிவாக்கு ▼')}
+            </button>
+            <div class="guide-aqi-chip">
+              <span class="chip-label">AQI</span>
+              <span class="chip-value">${aqi}</span>
+            </div>
           </div>
         </div>
 
@@ -734,9 +754,10 @@
         </div>
 
         ${nextStep ? `
-          <div class="guide-next">
+          <div class="guide-next" data-expand-option="${nextStep.key}" style="cursor: pointer;" title="${L('Tap to open this recommendation', 'इसे खोलने के लिए टैप करें', 'திறக்க தொடவும்')}">
             <span class="guide-next-label">${L('Next step', 'अगला कदम', 'அடுத்த படி')} →</span>
-            <span>${nextStep.icon} ${nextStep.title}</span>
+            <span>${nextStep.icon} ${nextStep.optionTitle}</span>
+            <span style="margin-left: auto; font-size: 12px; opacity: 0.85;">${state.guideOptionsOpen[nextStep.key] ? '▲' : '▼'}</span>
           </div>
         ` : `
           <div class="guide-next guide-complete">
@@ -748,19 +769,35 @@
           ${steps.map((s, i) => {
             const done = !!state.guideDone[s.key];
             const isNext = nextStep && nextStep.key === s.key;
+            const isOpen = !!state.guideOptionsOpen[s.key];
             return `
-              <li class="guide-step ${done ? 'done' : ''} ${isNext ? 'is-next' : ''}">
-                <button class="guide-check btn-guide-done" data-key="${s.key}" aria-pressed="${done}" aria-label="${L('Mark step as done', 'कदम पूरा करें', 'முடிந்ததாகக் குறிக்கவும்')}: ${s.title}">
-                  ${done ? '✓' : i + 1}
-                </button>
-                <div class="guide-step-body">
-                  <div class="guide-step-title"><span class="guide-step-icon">${s.icon}</span>${s.title}</div>
-                  <div class="guide-step-detail">${s.detail}</div>
+              <li class="guide-step ${done ? 'done' : ''} ${isNext ? 'is-next' : ''} ${isOpen ? 'expanded' : 'minimized'}">
+                <div class="guide-step-header" data-guide-toggle="${s.key}" role="button" tabindex="0" aria-expanded="${isOpen}">
+                  <button class="guide-check btn-guide-done" type="button" data-key="${s.key}" aria-pressed="${done}" aria-label="${L('Mark step as done', 'कदम पूरा करें', 'முடிந்ததாகக் குறிக்கவும்')}: ${s.optionTitle}">
+                    ${done ? '✓' : i + 1}
+                  </button>
+                  <div class="guide-step-summary">
+                    <span class="guide-step-title"><span class="guide-step-icon">${s.icon}</span>${s.optionTitle}</span>
+                    ${done ? `<span class="badge badge-good" style="font-size: 10.5px; padding: 2px 8px;">${L('Done', 'पूरा', 'முடிந்தது')}</span>` : ''}
+                  </div>
+                  <span class="guide-step-chevron">${isOpen ? L('▲ Minimize', '▲ संक्षिप्त', '▲ சுருக்கு') : L('▼ Expand', '▼ खोलें', '▼ விரிவாக்கு')}</span>
                 </div>
-                ${s.cta ? `
-                  <button class="guide-cta ${s.cta.mod ? 'btn-open-left-module' : 'btn-guide-scroll'}" ${s.cta.mod ? `data-mod="${s.cta.mod}"` : `data-target="${s.cta.scroll}"`}>
-                    ${s.cta.label} ›
-                  </button>` : ''}
+                <div class="guide-step-panel">
+                  <div class="guide-step-advice">${s.title}</div>
+                  <div class="guide-step-detail">${s.detail}</div>
+                  <div class="guide-step-actions">
+                    <button class="btn btn-sm ${done ? 'btn-outline' : 'btn-primary'} btn-guide-done" type="button" data-key="${s.key}">
+                      ${done ? '✓ ' + L('Completed', 'पूरा हुआ', 'முடிந்தது') : L('Mark as Done ✓', 'पूरा चिह्नित करें ✓', 'முடிந்ததாகக் குறி ✓')}
+                    </button>
+                    <button class="btn btn-outline btn-sm btn-speak-item" type="button" data-text="${encodeURIComponent(s.optionTitle + '. ' + s.title + '. ' + s.detail)}" data-key="guide_${s.key}">
+                      🔊 ${t.readAloud}
+                    </button>
+                    ${s.cta ? `
+                      <button class="guide-cta ${s.cta.mod ? 'btn-open-left-module' : 'btn-guide-scroll'}" type="button" ${s.cta.mod ? `data-mod="${s.cta.mod}"` : `data-target="${s.cta.scroll}"`}>
+                        ${s.cta.label} ›
+                      </button>` : ''}
+                  </div>
+                </div>
               </li>
             `;
           }).join('')}
@@ -1633,13 +1670,60 @@
 
     // Guided plan: tick steps done (saved per day)
     document.querySelectorAll('.btn-guide-done').forEach(btn => {
-      btn.onclick = () => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
         const key = btn.getAttribute('data-key');
         state.guideDone[key] = !state.guideDone[key];
         localStorage.setItem('cleanair_guide', JSON.stringify({ date: new Date().toDateString(), done: state.guideDone }));
         renderApp();
       };
     });
+
+    // Guided plan: expand/minimize individual option (minimizes others on expand)
+    document.querySelectorAll('[data-guide-toggle]').forEach(hdr => {
+      hdr.onclick = () => {
+        const key = hdr.getAttribute('data-guide-toggle');
+        const wasOpen = !!state.guideOptionsOpen[key];
+        Object.keys(state.guideOptionsOpen).forEach(k => {
+          state.guideOptionsOpen[k] = false;
+        });
+        if (!wasOpen) {
+          state.guideOptionsOpen[key] = true;
+        }
+        renderApp();
+      };
+      hdr.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          hdr.click();
+        }
+      };
+    });
+
+    // Guided plan: "Next step" bar expands that option
+    document.querySelectorAll('[data-expand-option]').forEach(bar => {
+      bar.onclick = () => {
+        const key = bar.getAttribute('data-expand-option');
+        const wasOpen = !!state.guideOptionsOpen[key];
+        Object.keys(state.guideOptionsOpen).forEach(k => {
+          state.guideOptionsOpen[k] = false;
+        });
+        state.guideOptionsOpen[key] = !wasOpen;
+        renderApp();
+      };
+    });
+
+    // Guided plan: Expand All / Minimize All toggle
+    const toggleAllGuideBtn = document.getElementById('btn-toggle-all-guide');
+    if (toggleAllGuideBtn) {
+      toggleAllGuideBtn.onclick = () => {
+        const anyOpen = Object.values(state.guideOptionsOpen).some(Boolean);
+        Object.keys(state.guideOptionsOpen).forEach(k => {
+          state.guideOptionsOpen[k] = !anyOpen;
+        });
+        renderApp();
+      };
+    }
 
     // Guided plan: scroll to a section
     document.querySelectorAll('.btn-guide-scroll').forEach(btn => {
